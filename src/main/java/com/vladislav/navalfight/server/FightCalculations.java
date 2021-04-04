@@ -4,8 +4,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface FightCalculations extends Remote {
-    public void initGame(SettingsData settingsData) throws RemoteException;
-    public TurnData makeTurn(TurnData turnData) throws RemoteException;
-    public int shotsNum() throws RemoteException;
-    public boolean allTargetsHit() throws RemoteException;
+    void initGame(SettingsData settingsData) throws RemoteException;
+    TurnData makeTurn(TurnData turnData) throws RemoteException;
+    int shotsNum() throws RemoteException;
+    boolean allTargetsHit() throws RemoteException;
 }
