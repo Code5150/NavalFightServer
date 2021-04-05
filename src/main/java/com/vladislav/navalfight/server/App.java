@@ -1,7 +1,7 @@
 package com.vladislav.navalfight.server;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 
 public class App
@@ -11,26 +11,19 @@ public class App
     private static final String METHODS_NAME = "FightCalculations";
 
     public static void main( String[] args ) {
-        System.out.println( "Hello World!" );
-
-        var field = FieldGenerator.generate(
-                new SettingsData(15, 100, 5, 4, 3, 2)
-        );
-        FieldGenerator.printField(field);
-
         rmiInit();
     }
 
     private static void rmiInit() {
+        System.out.println( "Starting server" );
         try {
             var fightCalcImpl = new FightCalculationsImpl();
-            var context = new InitialContext();
-            context.rebind(HOST + ":" + PORT + "/" + METHODS_NAME, fightCalcImpl);
+            Naming.rebind(HOST + ":" + PORT + "/" + METHODS_NAME, fightCalcImpl);
             while (true) {
                 System.out.println("Server is working");
                 Thread.sleep(60000);
             }
-        } catch (RemoteException | NamingException | InterruptedException e) {
+        } catch (RemoteException | InterruptedException | MalformedURLException e) {
             e.printStackTrace();
         }
     }

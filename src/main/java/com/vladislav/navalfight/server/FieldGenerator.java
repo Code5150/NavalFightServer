@@ -1,18 +1,17 @@
 package com.vladislav.navalfight.server;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class FieldGenerator {
     private static final Random random = new Random();
     private static int size = 0;
 
-    public static TurnData[][] generate(SettingsData settingsData) {
+    public static CellData[][] generate(SettingsData settingsData) {
         size = settingsData.getSize();
-        var result = new TurnData[size][size];
+        var result = new CellData[size][size];
         for (int i = 0; i < size; i++){
             for (int j = 0; j < size; j++){
-                result[i][j] = new TurnData(i, j, false, false);
+                result[i][j] = new CellData(i, j, false, false);
             }
         }
         for (int i = 0; i < settingsData.getShips4(); i++) setShip(4, result);
@@ -22,7 +21,7 @@ public class FieldGenerator {
         return result;
     }
 
-    private static void setShip(int shipSize, TurnData[][] field) {
+    private static void setShip(int shipSize, CellData[][] field) {
         while (true) {
             //Положение корабля: 0 - вертикальная, 1 - горизонтальная
             int orient = random.nextInt(2);
@@ -30,6 +29,7 @@ public class FieldGenerator {
             int posX = random.nextInt(size);
             int posY = random.nextInt(size);
             try {
+                var target = new Target();
                 if (orient == 0) {
                     if ((posY - shipSize + 1) < 0) throw new IndexOutOfBoundsException("Корабль за границами карты");
                     for (int i = (posY-shipSize); i <= posY + 1; i++ ){
@@ -40,7 +40,10 @@ public class FieldGenerator {
                             }
                         }
                     }
-                    for (int i = (posY-shipSize+1); i < posY + 1; i++) field[i][posX].setTarget(true);
+                    for (int i = (posY-shipSize+1); i < posY + 1; i++) {
+                        field[i][posX].setTarget(true);
+                        target.addCell(field[i][posX]);
+                    }
                 } else {
                     if ((posX + shipSize - 1) >= size) throw new IndexOutOfBoundsException("Корабль за границами карты");
                     for (int i = posY - 1; i <= posY + 1; i++ ){
@@ -51,27 +54,19 @@ public class FieldGenerator {
                             }
                         }
                     }
-                    for (int j = posX; j < posX + shipSize; j++) field[posY][j].setTarget(true);
+                    for (int j = posX; j < posX + shipSize; j++) {
+                        field[posY][j].setTarget(true);
+                        target.addCell(field[posY][j]);
+                    }
                 }
+                FightCalculationsImpl.addTarget(target);
                 break;
-            } catch (Exception ignored) {
-                System.out.println(ignored.getMessage());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         }
-
-        /*
-        var positions = new ArrayList<int[]>();
-        if (orient == 0) {
-            for (int i = shipSize - 1; i < size; i++) {
-                for (int j = 0; j < size; j++) {
-
-                }
-            }
-        } else {
-
-        }*/
     }
-    public static void printField(TurnData[][] field) {
+    public static void printField(CellData[][] field) {
         for(var row: field) {
             for (var col: row) {
                 if (col.isTarget()) System.out.print("[]");

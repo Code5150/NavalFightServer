@@ -1,14 +1,14 @@
 package com.vladislav.navalfight.server;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+import java.util.ArrayList;
+
 public class Target {
-    private TurnData[] ship;
+    private final ArrayList<CellData> ship = new ArrayList<>();
+
+    public void addCell(CellData cell) {
+        ship.add(cell);
+    }
 
     public boolean isDestroyed() {
         boolean result = true;

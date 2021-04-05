@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TurnData implements Serializable {
+public class CellData implements Serializable {
     private int x;
     private int y;
     private boolean target = false;
